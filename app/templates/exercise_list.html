@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ language | capitalize }} Exercises{% endblock %}
+
+{% block content %}
+<section class="exercise-list">
+  <h1>{{ language | capitalize }} - 問題一覧</h1>
+  <div class="exercise-cards">
+    {% for ex in exercises %}
+    <a href="/exercises/{{ language }}/{{ ex.id }}" class="exercise-card">
+      <div class="exercise-header">
+        <span class="exercise-number">#{{ ex.id }}</span>
+        <span class="difficulty difficulty-{{ ex.difficulty }}">{{ ex.difficulty }}</span>
+      </div>
+      <h3>{{ ex.title }}</h3>
+      <p>{{ ex.description }}</p>
+    </a>
+    {% endfor %}
+  </div>
+  <a href="/" class="back-link">&larr; 言語選択に戻る</a>
+</section>
+{% endblock %}
