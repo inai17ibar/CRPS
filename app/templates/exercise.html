@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ exercise.title }}{% endblock %}
+
+{% block content %}
+<section class="exercise-detail">
+  <div class="exercise-meta">
+    <a href="/exercises/{{ language }}" class="back-link">&larr; 問題一覧に戻る</a>
+    <span class="difficulty difficulty-{{ exercise.difficulty }}">{{ exercise.difficulty }}</span>
+  </div>
+
+  <h1>{{ exercise.title }}</h1>
+  <p class="description">{{ exercise.description }}</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span>{{ language }}</span>
+      <span class="filename">{{ exercise.filename }}</span>
+    </div>
+    <pre><code class="language-{{ language }}">{{ exercise.code }}</code></pre>
+  </div>
+
+  <div class="question-section">
+    <h2>{{ exercise.question }}</h2>
+    <div class="choices" id="choices">
+      {% for choice in exercise.choices %}
+      <button class="choice-btn" data-index="{{ loop.index0 }}"
+              onclick="selectChoice(this, {{ loop.index0 }})">
+        <span class="choice-label">{{ ['A', 'B', 'C', 'D'][loop.index0] }}</span>
+        <span class="choice-text">{{ choice }}</span>
+      </button>
+      {% endfor %}
+    </div>
+
+    <button id="submit-btn" class="submit-btn" disabled
+            onclick="submitAnswer('{{ language }}', {{ exercise.id }})">
+      回答する
+    </button>
+
+    <div id="result" class="result hidden"></div>
+  </div>
+
+  <div class="nav-exercises">
+    {% set prev_id = exercise.id - 1 %}
+    {% set next_id = exercise.id + 1 %}
+    {% if prev_id >= 1 %}
+    <a href="/exercises/{{ language }}/{{ prev_id }}" class="nav-btn">&larr; 前の問題</a>
+    {% endif %}
+    <a href="/exercises/{{ language }}/{{ next_id }}" class="nav-btn">次の問題 &rarr;</a>
+  </div>
+</section>
+{% endblock %}

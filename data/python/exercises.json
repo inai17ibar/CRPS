@@ -1,0 +1,172 @@
+[
+  {
+    "id": 1,
+    "title": "リスト内包表記の動作",
+    "description": "リスト内包表記とconditionの組み合わせを読み解く",
+    "difficulty": "easy",
+    "filename": "filter_even.py",
+    "code": "def process(numbers):\n    result = [x ** 2 for x in numbers if x % 2 == 0]\n    return result\n\nprint(process([1, 2, 3, 4, 5, 6]))",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "[1, 4, 9, 16, 25, 36]",
+      "[4, 16, 36]",
+      "[2, 4, 6]",
+      "[1, 9, 25]"
+    ],
+    "correct": 1,
+    "explanation": "リスト内包表記で `if x % 2 == 0` により偶数のみをフィルタし、それぞれを2乗しています。偶数は 2, 4, 6 なので、2²=4, 4²=16, 6²=36 となり [4, 16, 36] が出力されます。"
+  },
+  {
+    "id": 2,
+    "title": "辞書のデフォルト値",
+    "description": "dict.get() と defaultdict の挙動を理解する",
+    "difficulty": "easy",
+    "filename": "word_count.py",
+    "code": "from collections import defaultdict\n\ndef count_words(text):\n    counts = defaultdict(int)\n    for word in text.split():\n        counts[word] += 1\n    return dict(counts)\n\nresult = count_words(\"apple banana apple cherry banana apple\")\nprint(result[\"apple\"], result[\"banana\"], result.get(\"grape\", 0))",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "3 2 None",
+      "3 2 0",
+      "2 2 0",
+      "KeyError が発生する"
+    ],
+    "correct": 1,
+    "explanation": "defaultdict(int) により、存在しないキーにアクセスすると 0 が返されます。'apple' は3回、'banana' は2回出現します。result は通常の dict に変換されていますが、.get('grape', 0) でデフォルト値 0 を指定しているため KeyError にはなりません。出力は `3 2 0` です。"
+  },
+  {
+    "id": 3,
+    "title": "デコレータの実行順序",
+    "description": "デコレータがどのタイミングで実行されるかを読み解く",
+    "difficulty": "medium",
+    "filename": "decorator.py",
+    "code": "def decorator_a(func):\n    print(\"A applied\")\n    def wrapper(*args, **kwargs):\n        print(\"A before\")\n        result = func(*args, **kwargs)\n        print(\"A after\")\n        return result\n    return wrapper\n\ndef decorator_b(func):\n    print(\"B applied\")\n    def wrapper(*args, **kwargs):\n        print(\"B before\")\n        result = func(*args, **kwargs)\n        print(\"B after\")\n        return result\n    return wrapper\n\n@decorator_a\n@decorator_b\ndef greet():\n    print(\"Hello\")\n\ngreet()",
+    "question": "出力される順番として正しいものはどれですか？",
+    "choices": [
+      "A applied → B applied → A before → B before → Hello → B after → A after",
+      "B applied → A applied → A before → B before → Hello → B after → A after",
+      "A applied → B applied → B before → A before → Hello → A after → B after",
+      "B applied → A applied → B before → A before → Hello → A after → B after"
+    ],
+    "correct": 1,
+    "explanation": "デコレータは下から上に適用されます。まず @decorator_b が greet に適用され 'B applied' が出力、次に @decorator_a がその結果に適用され 'A applied' が出力されます。呼び出し時は外側 (A) の wrapper → 内側 (B) の wrapper → greet の順で実行されるため、'A before' → 'B before' → 'Hello' → 'B after' → 'A after' となります。"
+  },
+  {
+    "id": 4,
+    "title": "ジェネレータとイテレーション",
+    "description": "yield を使ったジェネレータ関数の挙動を理解する",
+    "difficulty": "medium",
+    "filename": "fibonacci.py",
+    "code": "def fibonacci(n):\n    a, b = 0, 1\n    count = 0\n    while count < n:\n        yield a\n        a, b = b, a + b\n        count += 1\n\ngen = fibonacci(6)\nnext(gen)\nnext(gen)\nprint(list(gen))",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "[0, 1, 1, 2, 3, 5]",
+      "[1, 2, 3, 5]",
+      "[1, 1, 2, 3]",
+      "[0, 1, 1, 2]"
+    ],
+    "correct": 1,
+    "explanation": "fibonacci(6) は 0, 1, 1, 2, 3, 5 を順に yield します。next(gen) を2回呼ぶと 0 と 1 が消費されます。その後 list(gen) で残りの要素を取得するため、[1, 2, 3, 5] が出力されます。ジェネレータは状態を保持するため、既に消費された値は含まれません。"
+  },
+  {
+    "id": 5,
+    "title": "クロージャと変数スコープ",
+    "description": "ループ内でのクロージャが変数をどのようにキャプチャするかを読み解く",
+    "difficulty": "hard",
+    "filename": "closure_trap.py",
+    "code": "def make_multipliers():\n    multipliers = []\n    for i in range(4):\n        def multiplier(x):\n            return x * i\n        multipliers.append(multiplier)\n    return multipliers\n\nm = make_multipliers()\nprint(m[0](10), m[1](10), m[2](10), m[3](10))",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "0 10 20 30",
+      "30 30 30 30",
+      "10 10 10 10",
+      "0 1 2 3"
+    ],
+    "correct": 1,
+    "explanation": "これはPythonの有名な「クロージャの罠」です。クロージャは変数 i の「値」ではなく「参照」をキャプチャします。ループ終了後 i は 3 になっているため、全ての multiplier は x * 3 を返します。したがって全て 10 * 3 = 30 となり、出力は `30 30 30 30` です。これを回避するにはデフォルト引数 `def multiplier(x, i=i):` を使います。"
+  },
+  {
+    "id": 6,
+    "title": "クラスの継承とMRO",
+    "description": "多重継承時のメソッド解決順序を理解する",
+    "difficulty": "hard",
+    "filename": "mro.py",
+    "code": "class A:\n    def greet(self):\n        return \"A\"\n\nclass B(A):\n    def greet(self):\n        return \"B\" + super().greet()\n\nclass C(A):\n    def greet(self):\n        return \"C\" + super().greet()\n\nclass D(B, C):\n    def greet(self):\n        return \"D\" + super().greet()\n\nprint(D().greet())",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "DBA",
+      "DBCA",
+      "DBAC",
+      "DCA"
+    ],
+    "correct": 1,
+    "explanation": "PythonのMRO（Method Resolution Order）はC3線形化アルゴリズムに従います。D の MRO は D → B → C → A → object です。D.greet() は 'D' + super().greet() で B.greet() を呼び、B.greet() は 'B' + super().greet() で C.greet() を呼び（MRO順）、C.greet() は 'C' + super().greet() で A.greet() を呼びます。結果は 'D' + 'B' + 'C' + 'A' = 'DBCA' です。"
+  },
+  {
+    "id": 7,
+    "title": "コンテキストマネージャの挙動",
+    "description": "with文と__enter__/__exit__の実行フローを読み解く",
+    "difficulty": "medium",
+    "filename": "context_manager.py",
+    "code": "class ManagedResource:\n    def __init__(self, name):\n        self.name = name\n        print(f\"init: {name}\")\n\n    def __enter__(self):\n        print(f\"enter: {self.name}\")\n        return self\n\n    def __exit__(self, exc_type, exc_val, exc_tb):\n        print(f\"exit: {self.name}\")\n        return True\n\nwith ManagedResource(\"R\") as r:\n    print(\"inside\")\n    raise ValueError(\"oops\")\n\nprint(\"after\")",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "init: R → enter: R → inside → ValueError が送出される",
+      "init: R → enter: R → inside → exit: R → after",
+      "init: R → enter: R → inside → exit: R → ValueError が送出される",
+      "init: R → inside → exit: R → after"
+    ],
+    "correct": 1,
+    "explanation": "__exit__ が True を返すと、with ブロック内で発生した例外は抑制されます。処理フローは: __init__ → __enter__ → ブロック内実行 → 例外発生 → __exit__(True を返す → 例外抑制) → with 文の後のコードが実行されます。もし __exit__ が False や None を返した場合、例外は再送出されます。"
+  },
+  {
+    "id": 8,
+    "title": "ミュータブルなデフォルト引数",
+    "description": "関数のデフォルト引数にリストを使った場合の落とし穴を理解する",
+    "difficulty": "easy",
+    "filename": "mutable_default.py",
+    "code": "def append_to(element, target=[]):\n    target.append(element)\n    return target\n\nresult1 = append_to(1)\nresult2 = append_to(2)\nresult3 = append_to(3)\n\nprint(result1)\nprint(result2)\nprint(result3)\nprint(result1 is result3)",
+    "question": "result3 の print 出力と、最後の is 比較の結果はどれですか？",
+    "choices": [
+      "[3] と False",
+      "[1, 2, 3] と True",
+      "[1, 2, 3] と False",
+      "[3] と True"
+    ],
+    "correct": 1,
+    "explanation": "Pythonではデフォルト引数は関数定義時に一度だけ評価されます。ミュータブルなオブジェクト（リスト）をデフォルトにすると、呼び出しごとに同じオブジェクトが使い回されます。そのため result1, result2, result3 は全て同じリスト [1, 2, 3] を参照しており、`result1 is result3` は True です。"
+  },
+  {
+    "id": 9,
+    "title": "非同期処理の実行順序",
+    "description": "asyncio.gather による並行処理の出力順を読み解く",
+    "difficulty": "hard",
+    "filename": "async_order.py",
+    "code": "import asyncio\n\nasync def task(name, delay):\n    print(f\"{name} start\")\n    await asyncio.sleep(delay)\n    print(f\"{name} end\")\n    return name\n\nasync def main():\n    results = await asyncio.gather(\n        task(\"A\", 0.3),\n        task(\"B\", 0.1),\n        task(\"C\", 0.2),\n    )\n    print(results)\n\nasyncio.run(main())",
+    "question": "出力の順番として正しいものはどれですか？",
+    "choices": [
+      "A start → B start → C start → B end → C end → A end → ['A', 'B', 'C']",
+      "A start → A end → B start → B end → C start → C end → ['A', 'B', 'C']",
+      "B start → B end → C start → C end → A start → A end → ['A', 'B', 'C']",
+      "A start → B start → C start → A end → B end → C end → ['A', 'B', 'C']"
+    ],
+    "correct": 0,
+    "explanation": "asyncio.gather は全てのコルーチンを並行に開始します。start は gather に渡された順（A→B→C）で出力されます。その後 await asyncio.sleep でイベントループに制御を返し、sleep時間が短い順に完了するため B(0.1s) → C(0.2s) → A(0.3s) の順で end が出力されます。results は gather に渡した順で ['A', 'B', 'C'] となります。"
+  },
+  {
+    "id": 10,
+    "title": "walrus演算子とループ",
+    "description": "Python 3.8+ の代入式 (:=) の使い方を理解する",
+    "difficulty": "medium",
+    "filename": "walrus.py",
+    "code": "data = [1, 5, 3, 8, 2, 9, 4, 7, 6]\n\nfiltered = [y for x in data if (y := x ** 2) > 20]\n\nprint(filtered)\nprint(len(filtered))",
+    "question": "このコードの出力は何ですか？",
+    "choices": [
+      "[25, 64, 81, 49, 36] と 5",
+      "[25, 9, 64, 81, 49, 36] と 6",
+      "[5, 8, 9, 7, 6] と 5",
+      "[64, 81, 49, 36] と 4"
+    ],
+    "correct": 0,
+    "explanation": "walrus演算子 (:=) で x**2 の結果を y に代入しつつ、y > 20 の条件でフィルタしています。各要素: 1→1, 5→25✓, 3→9, 8→64✓, 2→4, 9→81✓, 4→16, 7→49✓, 6→36✓ です。条件を満たす y の値がリストに入るため [25, 64, 81, 49, 36] で長さは 5 です。"
+  }
+]

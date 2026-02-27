@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Code Reading Practice System</h1>
+  <p class="subtitle">AIが書いたコードを読み解く力を鍛えよう</p>
+</section>
+
+<section class="language-grid">
+  <h2>言語を選択</h2>
+  <div class="cards">
+    {% for lang in languages %}
+    <a href="/exercises/{{ lang }}" class="card">
+      <div class="card-icon">
+        {% if lang == "python" %}🐍{% elif lang == "javascript" %}⚡{% elif lang == "go" %}🔵{% else %}📄{% endif %}
+      </div>
+      <h3>{{ lang | capitalize }}</h3>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
